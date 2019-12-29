@@ -36,13 +36,13 @@ def sumup(c,v):
 c9 = cf(watching=cf(c8), func=sumup )
 
 # no func provided, just get the data from the cell here
-# remove print_error to see difference in output
-c10 = cf(id="c10", watching=c6, func=lambda c,v : 1/0 , err=print_error )
+# add print_error to see difference in output
+c10 = cf(id="c10", watching=c6, func=lambda c,v : 1/0 , err=None )
 
 # err function is called when func fails
 # called as errfunc( cell, val, ex )
 # use clear_error for clean up
-c11 = cf(id="c11", watching=c6, err=print_error )
+c11 = cf(id="c11", watching=c6, err=None )
 
 
 def strcats(c,v):
