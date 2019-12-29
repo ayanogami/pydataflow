@@ -1,5 +1,5 @@
 
-from dataflow import CellDataFlow
+from dataflow import CellDataFlow, print_error, clear_error
 
 
 cf = CellDataFlow()
@@ -36,7 +36,13 @@ def sumup(c,v):
 c9 = cf(watching=cf(c8), func=sumup )
 
 # no func provided, just get the data from the cell here
-c10 = cf(watching=c9 )
+# remove print_error to see difference in output
+c10 = cf(id="c10", watching=c6, func=lambda c,v : 1/0 , err=print_error )
+
+# err function is called when func fails
+# called as errfunc( cell, val, ex )
+# use clear_error for clean up
+c11 = cf(id="c11", watching=c6, err=print_error )
 
 
 def strcats(c,v):
@@ -63,13 +69,15 @@ cs2.val ="ya"
 
 
 def val(x):
+    if x.error:
+        return "#ERR#"
     try:
-        return round(x,2)
+        return round(x.val,2)
     except:
-        return x
+        return x.val
 
 for cell in cf.cells:
-    print(val(cell.val),end="\t")
+    print(val(cell),end="\t")
 print()
 
 # propagate pushes data to the next depending cells
@@ -79,7 +87,7 @@ print()
 # since there is no circle defined its possible to loop
 while cf.propagate():
     for cell in cf.cells:
-        print(val(cell.val),end="\t")
+        print(val(cell),end="\t")
     print()
 
 
@@ -93,7 +101,7 @@ cs2.val = "you"
 
 def printit():
     for c in cf.cells:
-        print(val(c.val),end="\t")
+        print(val(c),end="\t")
     print(cdrop.val)
 
 # use the loop which calls propagate 
