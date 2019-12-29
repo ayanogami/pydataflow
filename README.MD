@@ -18,7 +18,7 @@ any assignment to `cell.val` will trigger dataflow in depending cells.
 
     cf = CellDataFlow()
 
-    c1 = cf.create_cell() # or sorthand -> c1 = cf()
+    c1 = cf.create_cell() # or shorthand -> c1 = cf()
 
     #lambda function is called with cell,cell.val
     c2 = cf(watching=c1, func=lambda c,v: v-1 )
