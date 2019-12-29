@@ -13,12 +13,12 @@ the flow definition is based on "cells".
 any assignment to `cell.val` will trigger dataflow in depending cells.
 
 
-    from dataflow import CellDataFlow
+    from dataflow import CellDataFlow, print_error, clear_error
 
 
     cf = CellDataFlow()
 
-    c1 = cf.create_cell() # or shorthand -> c1 = cf()
+    c1 = cf.create_cell() # or sorthand -> c1 = cf()
 
     #lambda function is called with cell,cell.val
     c2 = cf(watching=c1, func=lambda c,v: v-1 )
@@ -43,14 +43,21 @@ any assignment to `cell.val` will trigger dataflow in depending cells.
     # shorthand for cf.find
     c8 = cf(watching=cf(c6), func=lambda c,v : v*3.14 )
 
-    def sumup(c,v):    
+    def sumup(c,v):
         total = sum(map( lambda x : x.val, c.watching))
         return total
-        
+
     c9 = cf(watching=cf(c8), func=sumup )
 
     # no func provided, just get the data from the cell here
-    c10 = cf(watching=c9 )
+    # remove print_error to see difference in output
+    c10 = cf(id="c10", watching=c6, func=lambda c,v : 1/0 , err=print_error )
+ 
+    # err function is called when func fails
+    # called as errfunc( cell, val, ex )
+    # use clear_error for clean up
+    c11 = cf(id="c11", watching=c6, err=print_error )
+
 
     def strcats(c,v):
         # watching is a set, so the result combination is unpredictable
@@ -76,13 +83,15 @@ any assignment to `cell.val` will trigger dataflow in depending cells.
 
 
     def val(x):
+        if x.error:
+            return "#ERR#"
         try:
-            return round(x,2)
+            return round(x.val,2)
         except:
-            return x
+            return x.val
 
     for cell in cf.cells:
-        print(val(cell.val),end="\t")
+        print(val(cell),end="\t")
     print()
 
     # propagate pushes data to the next depending cells
@@ -92,7 +101,7 @@ any assignment to `cell.val` will trigger dataflow in depending cells.
     # since there is no circle defined its possible to loop
     while cf.propagate():
         for cell in cf.cells:
-            print(val(cell.val),end="\t")
+            print(val(cell),end="\t")
         print()
 
 
@@ -106,7 +115,7 @@ any assignment to `cell.val` will trigger dataflow in depending cells.
 
     def printit():
         for c in cf.cells:
-            print(val(c.val),end="\t")
+            print(val(c),end="\t")
         print(cdrop.val)
 
     # use the loop which calls propagate 
@@ -124,6 +133,5 @@ any assignment to `cell.val` will trigger dataflow in depending cells.
     printit()
 
     print("---done---")
-
 
 
