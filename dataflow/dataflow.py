@@ -30,6 +30,7 @@ class Cell(object):
         
         self.func = None
         self.errfunc = None
+        self.before = None
         
         self._val = None
         self._val_old = None
@@ -106,10 +107,18 @@ class Cell(object):
         try:
             self.clr_error()
             
+            val = self.source_ref.val
+            
+            if self.before:
+                r = self.before(self,val)
+                if r == False:
+                    return
+            
             if self.func is None:
-                self.val = self.source_ref.val
+                self.val = val
             else:
-                self.val = self.func( self, self.source_ref.val )
+                self.val = self.func( self, val )
+                
         except Exception as ex:
             self.error = ex
             if self.errfunc:
@@ -117,8 +126,8 @@ class Cell(object):
                     self.errfunc( self, self.source_ref.val, ex )
                 except Exception as errex:
                     self.error = Exception("multiple errors", ex, errex )
-                    
-        self.reset_trigger()    
+        finally:            
+            self.reset_trigger()    
 
     def clr_error(self):
         self.error = None
