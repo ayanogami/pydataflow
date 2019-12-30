@@ -21,7 +21,7 @@ def find_projectname():
   
 def setup():
     
-    version = "v0.0.2"
+    version = "v0.0.3a"
     projectname = find_projectname()
     
     setuptools.setup(

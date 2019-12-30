@@ -12,6 +12,8 @@ None. Pure Python.
 the flow definition is based on "cells".
 any assignment to `cell.val` will trigger dataflow in depending cells.
 
+refer also to the other samples on github
+
 
     from dataflow import CellDataFlow, print_error, clear_error
 

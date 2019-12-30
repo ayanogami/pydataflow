@@ -18,9 +18,10 @@ class CellValErrorException(CellException):
 
 class Cell(object):
     
-    def __init__(self,cellflow=None,id=None):
+    def __init__(self,cellflow=None,id=None,debug=False):
         
         self.cellflow = cellflow
+        self.debug = debug
         
         self.id = id
         self.error = None
@@ -36,7 +37,10 @@ class Cell(object):
         self.source_ref = None
         self.data_sinks = []
         self.watching = set()
-             
+       
+    def _print_d(self,*args):
+        if self.debug:
+            print( "(debug)", *args )
         
     def __repr__(self):
         return "<Cell id=" + repr(self.id) \
@@ -52,8 +56,10 @@ class Cell(object):
         return self._val
     
     def _setval(self,val):
+        self._print_d("receive id=", self.id or id(self), "val=", repr(val))
         self._val_old, self._val = self._val, val
         if val != self._val_old:
+            self._print_d( "changed id=", self.id or id(self))
             self.inform_all()
         
     def _delval(self):
@@ -120,7 +126,8 @@ class Cell(object):
 
 class CellDataFlow():
     
-    def __init__(self):
+    def __init__(self,debug=False):
+        self.debug=debug
         self.cells = []
         self.ids = {}
         self.last_error = []
@@ -136,7 +143,7 @@ class CellDataFlow():
     def create_cell(self,id=None,
                     watching=None,auto_watch=False,
                     func=None, err=None ):
-        c = Cell(cellflow=self,id=id)
+        c = Cell(cellflow=self,id=id,debug=self.debug)
         c.func = func
         c.errfunc = err
         
