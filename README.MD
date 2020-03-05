@@ -137,3 +137,9 @@ refer also to the other samples on github
     print("---done---")
 
 
+# License
+
+versions v0.0.1, v0.0.2, and v0.0.3 are released under MIT license.
+new versions will be released under AGPLv3 and later.
+see also license file.
+
