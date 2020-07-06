@@ -37,7 +37,9 @@ class Cell(object):
                 
         self.source_ref = None
         self.data_sinks = []
-        self.watching = set()
+        self.watching = set()        
+        self.watching_ref = set() # for use with bind
+       
        
     def _print_d(self,*args):
         if self.debug:
@@ -68,11 +70,29 @@ class Cell(object):
     
     val = property(_getval, _setval, _delval)
     
+    #
+    
     def ref(self,cell_id):
         """
         get a cell reference by id 
         """
         return self.cellflow.get_cell(cell_id)
+
+    def add_watch_ref(self,watch):
+        """add to the lazy watch"""
+        if type(watch) != list:
+            watch=[watch]
+        while len(watch)>0:
+            self.watching_ref.add(watch.pop())
+
+    def bind(self):
+        """bind all lazy watches"""
+        while len(self.watching_ref)>0:
+            cid = self.watching_ref.pop()
+            cell = self.cellflow.get_cell(cid)
+            self.watches( cell )
+
+    #
         
     def register_sink(self, c ):
         if c == self:
@@ -84,6 +104,10 @@ class Cell(object):
     def unregister_sink(self, c ):
         self.data_sinks.remove( c )
         c.watching.remove(self)
+
+    def unregister_sink_id(self, cid ):
+        c = self.cellflow.get_cell( cid )
+        self.unregister_sink( c )
 
     def unregister_all(self):
         for c in self.data_sinks:
@@ -156,7 +180,7 @@ class CellDataFlow():
         return self.create_cell(**kargs)
        
     def create_cell(self,id=None,
-                    watching=None,auto_watch=False,
+                    watching=None, lazy_watching=None,
                     func=None, err=None ):
         c = Cell(cellflow=self,id=id,debug=self.debug)
         c.func = func
@@ -174,6 +198,10 @@ class CellDataFlow():
                     dr.register_sink(c)
             else:
                 watching.register_sink(c)
+                
+        if lazy_watching:
+            c.add_watch_ref( lazy_watching )
+                
         return c
     
     def find(self,watches,recursion_level=5):
@@ -250,4 +278,8 @@ class CellDataFlow():
             raise CellNotFoundException()
         return self.ids[cell_id]
     
-    
+    def bind(self):
+        for cell in self.cells:
+            cell.bind()
+        
+        
