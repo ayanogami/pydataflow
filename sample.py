@@ -4,7 +4,7 @@ from dataflow import CellDataFlow, print_error, clear_error
 
 cf = CellDataFlow()
 
-c1 = cf.create_cell() # or sorthand -> c1 = cf()
+c1 = cf.create_cell() # or shorthand -> c1 = cf()
 
 #lambda function is called with cell,cell.val
 c2 = cf(watching=c1, func=lambda c,v: v-1 )
