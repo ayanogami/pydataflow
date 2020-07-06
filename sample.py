@@ -16,6 +16,7 @@ c4 = cf(watching=[c2,c3], func= lambda c,v: c2.val+c3.val )
 
 c5 = cf(watching=[c4], id="c5", func=lambda c,v : c2.val+c3.val+c4.val )
 
+# new in version v0.0.4
 c5ref_by_id = cf(watching=[c5], func=lambda c,v : str(c.ref("c5").val) + "!" )
 
 
