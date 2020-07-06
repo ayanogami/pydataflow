@@ -2,6 +2,10 @@
 from .dataflow import CellDataFlow, Cell
 from .dataflow import CellException, CellNotFoundException, CellSelfReferenceException
 
+
+VERSION="v0.0.4a"
+
+
 def print_error(c,v,ex):
     print( "error", c, v, ex )
     

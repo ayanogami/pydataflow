@@ -21,7 +21,7 @@ def find_projectname():
   
 def setup():
     
-    version = "v0.0.3"
+    version = find_version(os.path.join( "dataflow", "__init__.py") )
     projectname = find_projectname()
     
     setuptools.setup(
@@ -44,7 +44,7 @@ def setup():
             'Intended Audience :: Developers',
             'Topic :: Utilities',
             "Programming Language :: Python :: 3",
-            "License :: OSI Approved :: MIT License",
+            'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
         ],
         python_requires='>=3.6',
         scripts=[],

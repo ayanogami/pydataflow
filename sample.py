@@ -14,7 +14,10 @@ c3 = cf(watching=[c1], func=lambda c,v: v*2 )
 # could be any of the watches, c2 or c3
 c4 = cf(watching=[c2,c3], func= lambda c,v: c2.val+c3.val )
 
-c5 = cf(watching=[c4], func=lambda c,v : c2.val+c3.val+c4.val )
+c5 = cf(watching=[c4], id="c5", func=lambda c,v : c2.val+c3.val+c4.val )
+
+c5ref_by_id = cf(watching=[c5], func=lambda c,v : str(c.ref("c5").val) + "!" )
+
 
 # use find to add all depending watches automatically
 # print output will show that the data goes directly forward

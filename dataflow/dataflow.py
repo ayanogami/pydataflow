@@ -67,6 +67,12 @@ class Cell(object):
         self.setval( None )
     
     val = property(_getval, _setval, _delval)
+    
+    def ref(self,cell_id):
+        """
+        get a cell reference by id 
+        """
+        return self.cellflow.get_cell(cell_id)
         
     def register_sink(self, c ):
         if c == self:
@@ -239,4 +245,9 @@ class CellDataFlow():
                 func() 
         return cnt  
             
-            
+    def get_cell(self, cell_id):
+        if cell_id not in self.ids:
+            raise CellNotFoundException()
+        return self.ids[cell_id]
+    
+    
