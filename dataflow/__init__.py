@@ -3,7 +3,7 @@ from .dataflow import CellDataFlow, Cell
 from .dataflow import CellException, CellNotFoundException, CellSelfReferenceException
 
 
-VERSION="v0.0.4a"
+VERSION="v0.0.4"
 
 
 def print_error(c,v,ex):
