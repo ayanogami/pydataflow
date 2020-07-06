@@ -20,15 +20,15 @@ c5 = cf(watching=[c4], id="c5", func=lambda c,v : c2.val+c3.val+c4.val )
 # new in version v0.0.4, ref and lazy bind
 
 # lazy bound cells are referenced by id rather then object instance
-# create a lazy bound cell _before_ cell c5clone is created
-# refer to c5clone with ref() function by id
+# create a lazy bound cells _before_ cell c5clone is created
 c5_lazy = cf(lazy_watching="c5clone", func=lambda c,v : str(v) + "*" )
 
-c5_the_clone = cf( id="c5clone", watching=[c5], func=lambda c,v : str(v) + "!" )
-
+# refer to c5clone with ref() function by id
 c5ref_lazy = cf(lazy_watching="c5clone", func=lambda c,v : str(c.ref("c5clone").val) + "!!" )
 c5ref_lazy_array = cf(lazy_watching=["c5clone"], func=lambda c,v : str(c.ref("c5clone").val) + "!!!" )
 c5lazy_array = cf(lazy_watching=["c5clone"], func=lambda c,v : str(v) + "<-" )
+
+c5_the_clone = cf( id="c5clone", watching=[c5], func=lambda c,v : str(v) + "!" )
 
 # dont forget to bind all lazy watches before starting the dataflow
 cf.bind()
