@@ -313,6 +313,22 @@ def shuffle_stat_run(runs=100):
     cnt_over = len(list(filter(lambda x: x > cnt_noshuffe, results)))
     cnt_equal = len(list(filter(lambda x: x == cnt_noshuffe, results)))
 
+    print("-" * 7)
     print("cnt_under", cnt_under, cnt_under / len(results))
     print("cnt_over", cnt_over, cnt_over / len(results))
     print("cnt_equal", cnt_equal, cnt_equal / len(results))
+
+    cnt_saved = 0
+    cnt_waste = 0
+
+    for c in results:
+        rel = abs(cnt_noshuffe - c)
+        if c < cnt_noshuffe:
+            cnt_saved += rel
+            continue
+        if c > cnt_noshuffe:
+            cnt_waste += rel
+
+    print("-" * 7)
+    print("cnt_saved", cnt_saved)
+    print("cnt_waste", cnt_waste)
