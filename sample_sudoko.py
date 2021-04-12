@@ -14,6 +14,7 @@ undo, revert last move
 
 or call
 resolve, to solve the game
+shuffle_stat_run, to see how call to shuffle impacts the result
 
 """
 
@@ -113,7 +114,10 @@ def fill_board(cf, board, data):
         c = int(c)
         if c > 0:
             board[i].val = c
+        else:
+            board[i].val = None
         board[i].meta["preset"] = c > 0
+        board[i].hints(board[i])
         i += 1
 
 
@@ -197,16 +201,20 @@ game = """
     000 500 610
 """
 
-fill_board(cf, board, game)
 
-# set up the game
-for c in cf.cells:
-    c.reset_trigger()
-    c.hints(c)
+def fill_and_init():
+    fill_board(cf, board, game)
 
-# this will trigger no action here...
-cnt = cf.loop()
+    # set up the game
+    for c in cf.cells:
+        c.reset_trigger()
+        c.hints(c)
 
+    # this will trigger no action here...
+    cnt = cf.loop()
+
+
+fill_and_init()
 print_board(cf, board)
 
 
@@ -222,17 +230,21 @@ def sample_calls_like():
     print_board(cf, board)
 
 
-def resolve(debug=False, shuffle=True):
+cnt = 0
+
+
+def resolve(debug=False, shuffle=True, no_print=False):
     """call resolve to solve the game"""
+    global cnt
+    cnt = 0
+
     cells = filter(lambda x: x.meta["preset"] == False, cf.cells)
     rc = _resolve(cells, debug=debug, shuffle=shuffle)
     if rc:
-        print_board(cf, board)
+        if not no_print:
+            print_board(cf, board)
     else:
         print("no solution")
-
-
-cnt = 0
 
 
 def _resolve(cells=None, lvl=0, debug=False, shuffle=True):
@@ -278,3 +290,29 @@ def print_hints():
     cells = sorted(cells, key=lambda x: len(x.meta["hints"]))
     for c in cells:
         print(c.id, c.meta["hints"], len(c.meta["hints"]))
+
+
+def shuffle_stat_run(runs=100):
+    global cnt
+
+    fill_and_init()
+    resolve(shuffle=False, no_print=True)
+    cnt_noshuffe = cnt
+
+    results = []
+    for i in range(0, runs):
+        cnt = 0
+        fill_and_init()
+        resolve(shuffle=True, no_print=True)
+        results.append(cnt)
+
+    print("not shuffled", cnt_noshuffe)
+    print("shuffled", results)
+
+    cnt_under = len(list(filter(lambda x: x < cnt_noshuffe, results)))
+    cnt_over = len(list(filter(lambda x: x > cnt_noshuffe, results)))
+    cnt_equal = len(list(filter(lambda x: x == cnt_noshuffe, results)))
+
+    print("cnt_under", cnt_under, cnt_under / len(results))
+    print("cnt_over", cnt_over, cnt_over / len(results))
+    print("cnt_equal", cnt_equal, cnt_equal / len(results))
