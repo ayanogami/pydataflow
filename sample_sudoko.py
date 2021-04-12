@@ -222,10 +222,10 @@ def sample_calls_like():
     print_board(cf, board)
 
 
-def resolve(debug=False):
+def resolve(debug=False, shuffle=True):
     """call resolve to solve the game"""
     cells = filter(lambda x: x.meta["preset"] == False, cf.cells)
-    rc = _resolve(cells, debug=debug)
+    rc = _resolve(cells, debug=debug, shuffle=shuffle)
     if rc:
         print_board(cf, board)
     else:
