@@ -135,6 +135,8 @@ def print_board(cf, board):
                 v = " "
             else:
                 v = str(v)
+            if cell.meta["preset"]:
+                v += "*"
             print(v, end="\t")
         print()
 
