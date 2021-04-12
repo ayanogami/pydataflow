@@ -250,9 +250,11 @@ def _resolve(cells=None, lvl=0, debug=False, shuffle=True):
     for c in cells:
         x = c.meta["x"]
         y = c.meta["y"]
-        all_hints = peek(cf, x, y)
+        all_hints = list(peek(cf, x, y))
         if len(all_hints) == 0:
             return False
+        if shuffle:
+            random.shuffle(all_hints)
 
         for h in all_hints:
             debug and print(
